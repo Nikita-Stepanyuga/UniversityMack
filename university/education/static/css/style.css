@@ -48,4 +48,8 @@ body {
 .btn_teacher_form{
     margin-top: 1vh;
 }
+.custom-label{
+    margin-right: 5px;
+    padding-top: 5px;
+}
 

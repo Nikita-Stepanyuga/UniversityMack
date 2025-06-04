@@ -1,32 +1,48 @@
 {% extends "layout/base_form.html" %}
+{% load widget_tweaks %}
 
 {% block title %}Добавление преподавателя{% endblock %}
 
 {% block content %}
     <div class="container mt-4">
-        <h1 class="mb-4">Добавление преподавателя</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Добавление преподавателя</h1>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
+                             Добавить предмет
+            </button>
+        </div>
         <div class="card shadow p-4">
             <form method="POST">
                 {% csrf_token %}
-                <div class="mb-3">
-                    <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя:</label>
-                    {{ form.first_name }}
+                <div class="row mb-3 ">
+                    <label for="{{ form.first_name.id_for_label }}" class="col-sm-1 form-label custom-label"><b>Имя:</b></label>
+                    <div class="col-sm-10 offset-sm-1">
+                        {{ form.first_name|add_class:"form-control" }}
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия:</label>
-                    {{ form.last_name }}
+                <div class="row mb-3">
+                    <label for="{{ form.last_name.id_for_label }}" class="col-sm-2 form-label custom-label "><b>Фамилия:</b></label>
+                    <div class="col-sm-10">
+                    {{ form.last_name|add_class:"form-control" }}
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="{{ form.patronymic.id_for_label }}" class="form-label">Отчество:</label>
-                    {{ form.patronymic }}
+                <div class="row mb-3">
+                    <label for="{{ form.patronymic.id_for_label }}" class="col-sm-2 form-label "><b>Отчество:</b></label>
+                    <div class="col-sm-10">
+                    {{ form.patronymic|add_class:"form-control" }}
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="{{ form.position.id_for_label }}" class="form-label">Должность:</label>
-                    {{ form.position }}
+                <div class="row mb-3">
+                    <label for="{{ form.position.id_for_label }}" class="col-sm-2 form-label"><b>Должность:</b></label>
+                    <div class="col-sm-10 ">
+                    {{ form.position|add_class:"form-control" }}
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="{{ form.department.id_for_label }}" class="form-label">Кафедра:</label>
-                    {{ form.department }}
+                <div class="row mb-3">
+                    <label for="{{ form.department.id_for_label }}" class="col-sm-2 form-label"><b>Кафедра:</b></label>
+                    <div class="col-sm-10">
+                    {{ form.department|add_class:"form-control" }}
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -39,51 +55,50 @@
                           {% endfor %}
                         </select>
                       </div>
-
                       <div class="col-md-2 d-flex flex-column justify-content-center align-items-center">
                         <button type="button" id="add-discipline" class="btn btn-outline-primary mb-2">&gt;&gt;</button>
                         <button type="button" id="remove-discipline" class="btn btn-outline-danger">&lt;&lt;</button>
                       </div>
 
-                  <div class="col-md-5">
-                    <label>Выбранные дисциплины:</label>
-                    <select id="selected-disciplines" name="disciplines" multiple class="form-select" size="10">
-                      <!-- выбранные дисциплины появятся здесь -->
-                    </select>
-                  </div>
+                      <div class="col-md-5">
+                        <label>Выбранные дисциплины:</label>
+                        <select id="selected-disciplines" name="disciplines" multiple class="form-select" size="10">
+                          <!-- выбранные дисциплины появятся здесь -->
+                        </select>
+                      </div>
+                    </div>
                 </div>
-
-                </div>
-                    <!-- Кнопка для показа формы добавления -->
-                    <button type="button" class="btn btn-outline-secondary btn-sm mt-2" data-bs-toggle="collapse" data-bs-target="#addDisciplineForm">
-                        + Добавить дисциплину
-                    </button>
-
+                <button type="submit" id="save-teacher" class="btn btn-primary">Сохранить преподователя</button>
+            </form>
                     <!-- Форма добавления дисциплины -->
-                    <div class="collapse mt-3" id="addDisciplineForm">
-                        <div class="card card-body">
-                            <div id="inline-discipline-form">
+                    <div class="modal fade" id="addSubjectModal" tabindex="-1" aria-labelledby="addSubjectLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form id="inline-discipline-form" class="modal-content" method="POST">
                                 {% csrf_token %}
-                                <div class="mb-2">
-                                    <label class="form-label">Название дисциплины:</label>
-                                    {{ discipline_form.name }}
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addSubjectLabel">Добавление предмета:</h5>
                                 </div>
-                                <div class="mb-2">
-                                    <label class="form-label">Кафедра:</label>
-                                    <select class="form-select" name="department" id="id_new_department">
-                                        {% for dept in departments %}
-                                            <option value="{{ dept.id }}">{{ dept.name }}</option>
-                                        {% endfor %}
-                                    </select>
+                                <div class="row mb-2 ">
+                                    <div class="col-md-10 mx-auto">
+                                        <label class="form-label">Название предмета:</label>
+                                        {{ discipline_form.name|add_class:"form-control" }}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-10 mx-auto">
+                                        <label class="form-label">Кафедра:</label>
+                                        <select class="form-select" name="department" id="id_new_department">
+                                            {% for dept in departments %}
+                                                <option value="{{ dept.id }}">{{ dept.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-success btn-sm" id='save-discipline'>Сохранить дисциплину</button>
-                            </div>
-                            <div id="discipline-success" class="text-success mt-2" style="display:none;">Дисциплина добавлена!</div>
+                            </form>
                         </div>
                     </div>
 
-                    <button type="submit" id="save-teacher" class="btn btn-primary">Сохранить преподователя</button>
-            </form>
 
 
 <script>
