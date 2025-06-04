@@ -52,4 +52,10 @@ body {
     margin-right: 5px;
     padding-top: 5px;
 }
-
+.menu-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      transition: opacity 0.3s ease;
+    }
