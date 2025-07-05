@@ -20,6 +20,7 @@ from education import views
 
 urlpatterns = [
     path('', views.university_list, name='university_main'),
+    path('hello/',views.hello_list, name='hello_list'),
 
     path('university/', include([
         path('<int:id>/', views.university_detail, name='university_detail'),

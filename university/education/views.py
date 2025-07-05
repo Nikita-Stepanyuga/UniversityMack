@@ -21,6 +21,10 @@ def university_list(request):
     universities = University.objects.all()
     return render(request, "education/university_main.html", {"universities": universities})
 
+def hello_list(request):
+    return render(request, 'education/hello_list.html')
+
+
 def university_detail(request, id):
     university = get_object_or_404(University, id=id)
     return render(request, 'education/university_detail.html', {'university': university})
