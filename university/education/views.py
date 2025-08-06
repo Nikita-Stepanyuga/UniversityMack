@@ -1,6 +1,37 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .forms import UniversityForm, StudentForm, TeacherForm, FacultyForm, DepartmentForm, GroupForm, DisciplineForm
-from .models import University, Teacher, Student, Faculty, Department, Group, Discipline, Person, Teaches
+from itertools import dropwhile
+
+from django.shortcuts import (render,
+                              redirect,
+                              get_object_or_404)
+
+from .forms import (UniversityForm,
+                    StudentForm,
+                    TeacherForm,
+                    FacultyForm,
+                    DepartmentForm,
+                    GroupForm,
+                    DisciplineForm,
+                    UserRegistrationForm)
+
+from .models import (University,
+                     Teacher,
+                     Student,
+                     Faculty,
+                     Department,
+                     Group,
+                     Discipline,
+                     Person,
+                     Teaches)
+
+from django.contrib import messages
+
+from django.contrib.auth import (authenticate,
+                                 login)
+
+from django.contrib.auth.decorators import (login_required,
+                                            user_passes_test)
+
+
 from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -19,16 +50,61 @@ def create_university(request):
 
 def university_list(request):
     universities = University.objects.all()
-    return render(request, "education/university_main.html", {"universities": universities})
+    form = UserRegistrationForm()  # ← добавляем создание формы
+    return render(request, "education/university_main.html", {
+        "universities": universities,
+        "form": form  # ← обязательно передаём в шаблон
+    })
+
+def register_user(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            group = Group.objects.get(name=form.cleaned_data['role'])
+            user.groups.add(group)
+            return redirect('university_main')
+    return redirect('university_main')
 
 def hello_list(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+
+            if user.groups.filter(name='Преподаватели').exists():
+                return redirect('teacher_dashboard')
+            elif user.groups.filter(name='Студенты').exists():
+                return redirect('student_dashboard')
+            else:
+                return redirect('university_main')  # если без группы
+        else:
+            messages.error(request, 'Неверный логин или пароль')
+
     return render(request, 'education/hello_list.html')
 
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='Преподаватели').exists())
+def teacher_dashboard(request):
+    return render(request, 'education/faculty_detail.html')
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='Студенты').exists())
+def student_dashboard(request):
+    return render(request, 'education/group_detail.html')
 
 def university_detail(request, id):
     university = get_object_or_404(University, id=id)
     return render(request, 'education/university_detail.html', {'university': university})
 
+def student_dashboard(request):
+    return render(request, 'education/student_dashboard.html')
 
 def add_student(request):
     if request.method == 'POST':
@@ -58,7 +134,6 @@ def add_teacher(request):
         'discipline_form': discipline_form,
         'departments':departments
     })
-
 
 def add_faculty(request):
     if request.method == 'POST':
@@ -156,6 +231,8 @@ def add_group(request):
     else:
         form = GroupForm()
         return render(request, 'education/add_group.html', {'form': form})
+
+    return render(request, 'education/add_group.html', {'form': form})
 
 def group_list(request):
     groups = Group.objects.all()

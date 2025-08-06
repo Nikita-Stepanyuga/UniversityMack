@@ -19,8 +19,12 @@ from django.urls import path, include
 from education import views
 
 urlpatterns = [
-    path('', views.university_list, name='university_main'),
-    path('hello/',views.hello_list, name='hello_list'),
+    path('', views.hello_list, name='hello_list'),
+    path('student', views.student_dashboard, name='student_dashboard'),
+    path('register/', views.register_user, name='register_user'),
+    #path('teacher/', views.teacher_dashboard, name='teacher_dashboard'),
+
+    path('hello/',views.university_list, name='university_main'),
 
     path('university/', include([
         path('<int:id>/', views.university_detail, name='university_detail'),

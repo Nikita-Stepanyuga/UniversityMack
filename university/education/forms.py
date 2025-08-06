@@ -1,5 +1,14 @@
 from django import forms
-from .models import University, Student, Teacher, Faculty, Department, Person, Group, Discipline, Teaches
+from django.contrib.auth.models import User
+from .models import (University,
+                     Student,
+                     Teacher,
+                     Faculty,
+                     Department,
+                     Person,
+                     Group,
+                     Discipline,
+                     Teaches)
 
 class UniversityForm(forms.ModelForm):
     class Meta:
@@ -98,3 +107,10 @@ class GroupForm(forms.ModelForm):
         model = Group
         fields = ['name', 'faculty', 'curator']
 
+class UserRegistrationForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+    role = forms.ChoiceField(choices=[('Студенты', 'Студент'), ('Преподаватели', 'Преподаватель')])
+
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'role']

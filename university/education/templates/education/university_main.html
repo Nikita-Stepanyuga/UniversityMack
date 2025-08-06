@@ -23,6 +23,38 @@
         <div class="col-12 col-md-6 col-lg-4 mb-4">
             <a href="{% url 'group_list' %}" class="btn w-100 p-4 text-center fs-3 btn-custom-color">Группы</a>
         </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <a href="#"
+            class="btn w-100 p-4 text-center fs-3 btn-custom-color"
+            data-bs-toggle="modal"
+            data-bs-target="#registerModal">
+            Регистрация
+            </a>
+        </div>
     </div>
 </div>
+
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="registerModalLabel">Регистрация пользователя</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+
+      <div class="modal-body">
+        <form method="post" action="{% url 'register_user' %}">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary mt-3">Создать пользователя</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
 {% endblock %}
+
